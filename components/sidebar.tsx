@@ -2,20 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard, Users, Receipt, FlaskConical,
-  UserRound, Settings, ChevronRight,
-} from "lucide-react";
+import { LayoutDashboard, Users, Receipt, FlaskConical, UserRound, Settings, ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 const NAV = [
-  { href: "/dashboard", label: "Dashboard",  icon: LayoutDashboard, enabled: true  },
-  { href: "/patients",  label: "Patients",   icon: Users,           enabled: true  },
-  { href: "/billing",   label: "Billing",    icon: Receipt,         enabled: true  },
-  { href: "/tests",     label: "Tests",      icon: FlaskConical,    enabled: false },
-  { href: "/doctors",   label: "Doctors",    icon: UserRound,       enabled: false },
-  { href: "/settings",  label: "Settings",   icon: Settings,        enabled: false },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, enabled: true  },
+  { href: "/patients",  label: "Patients",  icon: Users,           enabled: true  },
+  { href: "/billing",   label: "Billing",   icon: Receipt,         enabled: true  },
+  { href: "/tests",     label: "Tests",     icon: FlaskConical,    enabled: false },
+  { href: "/doctors",   label: "Doctors",   icon: UserRound,       enabled: false },
+  { href: "/settings",  label: "Settings",  icon: Settings,        enabled: false },
 ];
 
 export default function Sidebar() {
@@ -45,10 +43,8 @@ export default function Sidebar() {
               {enabled ? (
                 <Link href={href}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors group",
-                    active
-                      ? "bg-blue-600 text-white"
-                      : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    active ? "bg-blue-600 text-white" : "text-slate-400 hover:bg-slate-800 hover:text-white"
                   )}>
                   <Icon className="w-4 h-4 shrink-0" />
                   <span className="flex-1">{label}</span>
@@ -58,9 +54,7 @@ export default function Sidebar() {
                 <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 cursor-not-allowed select-none">
                   <Icon className="w-4 h-4 shrink-0" />
                   <span className="flex-1">{label}</span>
-                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-slate-700 text-slate-500">
-                    Soon
-                  </Badge>
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-slate-700 text-slate-500">Soon</Badge>
                 </div>
               )}
             </div>
@@ -68,9 +62,16 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom */}
-      <div className="px-5 py-4 border-t border-slate-800">
-        <p className="text-xs text-slate-600">v1.0 · Demo Build</p>
+      {/* Bottom info */}
+      <div className="px-4 py-4 border-t border-slate-800 space-y-2">
+        {/* Status */}
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shrink-0" />
+          <span className="text-xs text-slate-400">System Online</span>
+        </div>
+        {/* Date */}
+        <p className="text-xs text-slate-600">{format(new Date(), "EEEE, dd MMMM yyyy")}</p>
+        <p className="text-xs text-slate-700">v1.0 · Demo Build</p>
       </div>
     </aside>
   );
