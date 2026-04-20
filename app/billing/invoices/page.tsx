@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Plus, Receipt } from "lucide-react";
@@ -94,9 +95,9 @@ export default function InvoicesPage() {
               <h2 className="text-xl font-bold text-slate-800">Invoice History</h2>
               <p className="text-slate-500 text-sm">{rows.length} invoices · ₹{totalRevenue.toLocaleString("en-IN")} collected · {pending} pending</p>
             </div>
-            <Button asChild className="bg-blue-600 hover:bg-blue-700">
-              <a href="/billing"><Plus className="w-4 h-4 mr-1.5" /> New Invoice</a>
-            </Button>
+            <LinkButton href="/billing" className="bg-blue-600 text-white hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-1.5" /> New Invoice
+            </LinkButton>
           </div>
 
           {/* Filters */}

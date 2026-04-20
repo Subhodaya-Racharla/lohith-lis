@@ -16,10 +16,10 @@ import { toast } from "sonner";
 
 const schema = z.object({
   full_name:           z.string().min(2, "Name is required"),
-  age:                 z.coerce.number().min(0).max(150).optional(),
-  gender:              z.enum(["M", "F", "Other"]).optional(),
+  age:                 z.string().optional(),
+  gender:              z.enum(["M", "F", "Other", ""]).optional(),
   phone:               z.string().regex(/^[6-9]\d{9}$/, "Enter valid 10-digit Indian mobile"),
-  email:               z.string().email("Invalid email").optional().or(z.literal("")),
+  email:               z.string().optional(),
   address:             z.string().optional(),
   city:                z.string().optional(),
   referring_doctor_id: z.string().optional(),
@@ -55,7 +55,7 @@ export default function NewPatientPage() {
     const { data: inserted, error } = await supabase.from("lis_patients").insert({
       patient_code,
       full_name:           data.full_name.trim(),
-      age:                 data.age || null,
+      age:                 data.age ? parseInt(data.age) : null,
       gender:              data.gender || null,
       phone:               data.phone.trim(),
       email:               data.email || null,
@@ -109,7 +109,7 @@ export default function NewPatientPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {field("full_name", "Full Name *", { placeholder: "e.g. Ramesh Kumar" })}
                   {field("phone", "Mobile Number *", { placeholder: "10-digit mobile", maxLength: 10, inputMode: "numeric" })}
-                  {field("age", "Age", { placeholder: "e.g. 35", type: "number", min: "0", max: "150" })}
+                  {field("age", "Age", { placeholder: "e.g. 35", type: "number", min: "0", max: "150", inputMode: "numeric" })}
                   <div className="space-y-1.5">
                     <Label htmlFor="gender" className="text-slate-700">Gender</Label>
                     <select id="gender" {...register("gender")}

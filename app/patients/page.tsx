@@ -7,8 +7,8 @@ import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
 import { Search, Plus, ChevronRight, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { LinkButton } from "@/components/link-button";
 import { format } from "date-fns";
 
 type PatientRow = {
@@ -75,11 +75,9 @@ export default function PatientsPage() {
               <h2 className="text-xl font-bold text-slate-800">Patient Registry</h2>
               <p className="text-slate-500 text-sm">Search, register, and manage patients</p>
             </div>
-            <Button asChild className="bg-blue-600 hover:bg-blue-700">
-              <a href="/patients/new">
-                <Plus className="w-4 h-4 mr-1.5" /> Register Patient
-              </a>
-            </Button>
+            <LinkButton href="/patients/new" className="bg-blue-600 text-white hover:bg-blue-700">
+              <Plus className="w-4 h-4 mr-1.5" /> Register Patient
+            </LinkButton>
           </div>
 
           {/* Search */}

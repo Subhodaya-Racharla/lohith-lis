@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { LogOut, User, Bell, FlaskConical } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -40,18 +39,16 @@ export default function Topbar({ title }: { title?: string }) {
       )}
 
       <div className="flex items-center gap-2 ml-auto">
-        <Button variant="ghost" size="icon" className="text-slate-500 hover:text-slate-700">
+        <button className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Bell className="w-4 h-4" />
-        </Button>
+        </button>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-2 px-2 h-9">
-              <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center">
-                <User className="w-3.5 h-3.5 text-blue-600" />
-              </div>
-              <span className="hidden sm:block text-sm text-slate-700 max-w-[140px] truncate">{email}</span>
-            </Button>
+          <DropdownMenuTrigger className="flex items-center gap-2 px-2 h-9 rounded-lg hover:bg-slate-100 transition-colors outline-none">
+            <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center">
+              <User className="w-3.5 h-3.5 text-blue-600" />
+            </div>
+            <span className="hidden sm:block text-sm text-slate-700 max-w-[140px] truncate">{email}</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuLabel className="truncate text-xs text-slate-500 font-normal">{email}</DropdownMenuLabel>

@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/link-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -317,9 +318,9 @@ function BillingInner() {
                 }}>
                   New Invoice
                 </Button>
-                <Button variant="outline" className="flex-1" asChild>
-                  <a href="/billing/invoices">View All Invoices</a>
-                </Button>
+                <LinkButton href="/billing/invoices" variant="outline" className="flex-1 justify-center">
+                  View All Invoices
+                </LinkButton>
               </div>
             </div>
           </main>
@@ -342,9 +343,9 @@ function BillingInner() {
                 <h2 className="text-xl font-bold text-slate-800">New Invoice</h2>
                 <p className="text-slate-500 text-sm">Select patient → add tests → generate</p>
               </div>
-              <Button variant="outline" asChild size="sm">
-                <a href="/billing/invoices"><Receipt className="w-4 h-4 mr-1.5" /> View Invoices</a>
-              </Button>
+              <LinkButton href="/billing/invoices" variant="outline" size="sm">
+                <Receipt className="w-4 h-4 mr-1.5" /> View Invoices
+              </LinkButton>
             </div>
 
             {/* Step 1 — Patient */}

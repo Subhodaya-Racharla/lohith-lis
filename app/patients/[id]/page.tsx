@@ -7,6 +7,7 @@ import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { LinkButton } from "@/components/link-button";
 import { ArrowLeft, Phone, Mail, MapPin, User, Receipt, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -102,11 +103,9 @@ export default function PatientDetailPage() {
                   {patient.age ? ` · ${patient.age} years old` : ""}
                 </p>
               </div>
-              <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700">
-                <a href={`/billing?patient=${patient.id}`}>
-                  <Plus className="w-4 h-4 mr-1.5" /> New Invoice
-                </a>
-              </Button>
+              <LinkButton href={`/billing?patient=${patient.id}`} size="sm" className="bg-blue-600 text-white hover:bg-blue-700">
+                <Plus className="w-4 h-4 mr-1.5" /> New Invoice
+              </LinkButton>
             </div>
 
             {/* Info cards */}
