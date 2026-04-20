@@ -245,5 +245,22 @@ BEGIN
     END IF;
   END IF;
 
-  SELECT setval('lis_invoice_seq', 3);
+  PERFORM setval('lis_invoice_seq', 3);
 END $$;
+
+-- ── Payment History ───────────────────────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS lis_payment_history (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  invoice_id   UUID REFERENCES lis_invoices(id) ON DELETE CASCADE,
+  amount       NUMERIC NOT NULL,
+  payment_mode TEXT,
+  received_by  UUID REFERENCES auth.users,
+  received_at  TIMESTAMPTZ DEFAULT NOW(),
+  notes        TEXT
+);
+
+ALTER TABLE lis_payment_history ENABLE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  CREATE POLICY "auth_all" ON lis_payment_history FOR ALL TO authenticated USING (true) WITH CHECK (true);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;

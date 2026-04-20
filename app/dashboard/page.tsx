@@ -9,7 +9,13 @@ import { Users, IndianRupee, ClipboardList, UserCheck, Plus, Search } from "luci
 import { Badge } from "@/components/ui/badge";
 import { format, startOfMonth } from "date-fns";
 
-type Stats = { todayPatients: number; todayRevenue: number; pendingInvoices: number; monthPatients: number };
+type Stats = {
+  todayPatients: number;
+  todayRevenue: number;
+  pendingInvoices: number;
+  pendingAmount: number;
+  monthPatients: number;
+};
 type RecentPatient = { id: string; full_name: string; phone: string; patient_code: string; age: number | null; gender: string | null; created_at: string };
 type RecentInvoice = { id: string; invoice_number: string; total_amount: number; payment_status: string; created_at: string; patient_name: string };
 
@@ -21,7 +27,7 @@ const STATUS_CLS: Record<string, string> = {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [stats, setStats]     = useState<Stats>({ todayPatients: 0, todayRevenue: 0, pendingInvoices: 0, monthPatients: 0 });
+  const [stats, setStats]     = useState<Stats>({ todayPatients: 0, todayRevenue: 0, pendingInvoices: 0, pendingAmount: 0, monthPatients: 0 });
   const [patients, setPatients] = useState<RecentPatient[]>([]);
   const [invoices, setInvoices] = useState<RecentInvoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,14 +44,14 @@ export default function DashboardPage() {
   async function load() {
     const [
       { count: todayPat },
-      { count: pendingInv },
+      { data: pendingData },
       { data: revData },
       { count: monthPat },
       { data: recentPat },
       { data: recentInv },
     ] = await Promise.all([
       supabase.from("lis_patients").select("*", { count: "exact", head: true }).gte("created_at", today),
-      supabase.from("lis_invoices").select("*", { count: "exact", head: true }).eq("payment_status", "pending"),
+      supabase.from("lis_invoices").select("total_amount, amount_paid").in("payment_status", ["pending", "partial"]),
       supabase.from("lis_invoices").select("total_amount").gte("created_at", today).eq("payment_status", "paid"),
       supabase.from("lis_patients").select("*", { count: "exact", head: true }).gte("created_at", monthStart),
       supabase.from("lis_patients").select("id, full_name, phone, patient_code, age, gender, created_at").order("created_at", { ascending: false }).limit(5),
@@ -53,7 +59,14 @@ export default function DashboardPage() {
     ]);
 
     const revenue = (revData || []).reduce((s: number, r: { total_amount: number }) => s + (r.total_amount || 0), 0);
-    setStats({ todayPatients: todayPat || 0, todayRevenue: revenue, pendingInvoices: pendingInv || 0, monthPatients: monthPat || 0 });
+    const pendingAmt = (pendingData || []).reduce((s: number, r: { total_amount: number; amount_paid: number }) => s + ((r.total_amount || 0) - (r.amount_paid || 0)), 0);
+    setStats({
+      todayPatients: todayPat || 0,
+      todayRevenue: revenue,
+      pendingInvoices: (pendingData || []).length,
+      pendingAmount: pendingAmt,
+      monthPatients: monthPat || 0,
+    });
     setPatients(recentPat || []);
     setInvoices((recentInv || []).map((r: Record<string, unknown>) => ({
       id:             r.id as string,
@@ -68,13 +81,6 @@ export default function DashboardPage() {
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
-
-  const statCards = [
-    { label: "Today's Patients",  value: stats.todayPatients,  prefix: "",  icon: Users,          bg: "bg-blue-50",   ic: "text-blue-600"   },
-    { label: "Today's Revenue",   value: stats.todayRevenue,   prefix: "₹", icon: IndianRupee,    bg: "bg-green-50",  ic: "text-green-600"  },
-    { label: "Pending Invoices",  value: stats.pendingInvoices, prefix: "", icon: ClipboardList,  bg: "bg-amber-50",  ic: "text-amber-600"  },
-    { label: "Patients This Month", value: stats.monthPatients, prefix: "", icon: UserCheck,      bg: "bg-purple-50", ic: "text-purple-600" },
-  ];
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -107,19 +113,65 @@ export default function DashboardPage() {
 
           {/* Stat cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {statCards.map(({ label, value, prefix, icon: Icon, bg, ic }) => (
-              <div key={label} className="bg-white rounded-xl border border-slate-200 p-5">
-                <div className={`w-10 h-10 ${bg} rounded-lg flex items-center justify-center mb-3`}>
-                  <Icon className={`w-5 h-5 ${ic}`} />
-                </div>
-                {loading ? (
-                  <div className="h-7 w-16 bg-slate-100 rounded animate-pulse mb-1" />
-                ) : (
-                  <p className="text-2xl font-bold text-slate-800">{prefix}{typeof value === "number" ? value.toLocaleString("en-IN") : value}</p>
-                )}
-                <p className="text-xs text-slate-500 font-medium mt-0.5">{label}</p>
+
+            {/* Today's Patients */}
+            <div className="bg-white rounded-xl border border-slate-200 p-5">
+              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-3">
+                <Users className="w-5 h-5 text-blue-600" />
               </div>
-            ))}
+              {loading ? <div className="h-7 w-16 bg-slate-100 rounded animate-pulse mb-1" /> : (
+                <p className="text-2xl font-bold text-slate-800">{stats.todayPatients}</p>
+              )}
+              <p className="text-xs text-slate-500 font-medium mt-0.5">Today&apos;s Patients</p>
+            </div>
+
+            {/* Today's Revenue */}
+            <div className="bg-white rounded-xl border border-slate-200 p-5">
+              <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center mb-3">
+                <IndianRupee className="w-5 h-5 text-green-600" />
+              </div>
+              {loading ? <div className="h-7 w-16 bg-slate-100 rounded animate-pulse mb-1" /> : (
+                <p className="text-2xl font-bold text-slate-800">₹{stats.todayRevenue.toLocaleString("en-IN")}</p>
+              )}
+              <p className="text-xs text-slate-500 font-medium mt-0.5">Today&apos;s Revenue</p>
+            </div>
+
+            {/* Pending Invoices — clickable */}
+            <button
+              onClick={() => router.push("/billing/invoices?status=pending")}
+              className="bg-white rounded-xl border border-amber-200 p-5 text-left hover:bg-amber-50 hover:border-amber-300 transition-colors group"
+            >
+              <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-amber-100 transition-colors">
+                <ClipboardList className="w-5 h-5 text-amber-600" />
+              </div>
+              {loading ? (
+                <>
+                  <div className="h-7 w-16 bg-slate-100 rounded animate-pulse mb-1" />
+                  <div className="h-3 w-24 bg-slate-100 rounded animate-pulse mt-1" />
+                </>
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-slate-800">{stats.pendingInvoices}</p>
+                  {stats.pendingInvoices > 0 && (
+                    <p className="text-xs text-amber-600 font-semibold mt-0.5">
+                      ₹{stats.pendingAmount.toLocaleString("en-IN")} pending
+                    </p>
+                  )}
+                </>
+              )}
+              <p className="text-xs text-slate-500 font-medium mt-0.5">Pending Invoices</p>
+            </button>
+
+            {/* Patients This Month */}
+            <div className="bg-white rounded-xl border border-slate-200 p-5">
+              <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center mb-3">
+                <UserCheck className="w-5 h-5 text-purple-600" />
+              </div>
+              {loading ? <div className="h-7 w-16 bg-slate-100 rounded animate-pulse mb-1" /> : (
+                <p className="text-2xl font-bold text-slate-800">{stats.monthPatients}</p>
+              )}
+              <p className="text-xs text-slate-500 font-medium mt-0.5">Patients This Month</p>
+            </div>
           </div>
 
           {/* Recent lists */}
