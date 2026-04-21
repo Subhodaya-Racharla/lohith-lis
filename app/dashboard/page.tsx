@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation"; // still used for auth redirect
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
@@ -137,9 +138,9 @@ export default function DashboardPage() {
             </div>
 
             {/* Pending Invoices — clickable */}
-            <a
+            <Link
               href="/billing/invoices?status=pending"
-              className="bg-white rounded-xl border border-amber-200 p-5 text-left hover:bg-amber-50 hover:border-amber-300 transition-colors group block"
+              className="bg-white rounded-xl border border-amber-200 p-5 text-left hover:bg-amber-50 hover:border-amber-300 transition-colors group block cursor-pointer"
             >
               <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-amber-100 transition-colors">
                 <ClipboardList className="w-5 h-5 text-amber-600" />
@@ -160,7 +161,7 @@ export default function DashboardPage() {
                 </>
               )}
               <p className="text-xs text-slate-500 font-medium mt-0.5">Pending Invoices</p>
-            </a>
+            </Link>
 
             {/* Patients This Month */}
             <div className="bg-white rounded-xl border border-slate-200 p-5">
