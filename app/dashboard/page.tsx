@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
@@ -132,11 +131,12 @@ export default function DashboardPage() {
             </div>
 
             {/* Pending Invoices — clickable */}
-            <Link
-              href="/billing/invoices?status=pending"
-              className="bg-white rounded-xl border border-amber-200 p-4 md:p-5 hover:bg-amber-50 hover:border-amber-300 transition-colors group block"
+            <div
+              onClick={() => { window.location.href = "/billing/invoices?status=pending"; }}
+              style={{ cursor: "pointer" }}
+              className="bg-white rounded-xl border border-amber-200 p-4 md:p-5 hover:bg-amber-50 active:bg-amber-100 transition-colors"
             >
-              <div className="w-9 h-9 md:w-10 md:h-10 bg-amber-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-amber-100 transition-colors">
+              <div className="w-9 h-9 md:w-10 md:h-10 bg-amber-50 rounded-lg flex items-center justify-center mb-3">
                 <ClipboardList className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />
               </div>
               {loading ? (
@@ -154,8 +154,8 @@ export default function DashboardPage() {
                   )}
                 </>
               )}
-              <p className="text-xs text-slate-500 font-medium mt-0.5">Pending Invoices</p>
-            </Link>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">Pending Invoices ↗</p>
+            </div>
 
             {/* Patients This Month */}
             <div className="bg-white rounded-xl border border-slate-200 p-4 md:p-5">

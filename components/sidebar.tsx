@@ -78,10 +78,7 @@ export default function Sidebar() {
       </aside>
 
       {/* ── Mobile bottom tab bar ────────────────────────────────────────────── */}
-      <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-slate-200 flex items-stretch"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-      >
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 flex items-stretch">
         {MOBILE_NAV.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + "/");
           return (
