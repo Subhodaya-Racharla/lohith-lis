@@ -140,7 +140,7 @@ export default function NewPatientPage() {
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar title="Register Patient" />
-        <main className="flex-1 pb-24 p-6">
+        <main className="flex-1 p-4 md:p-6 pb-36 md:pb-24">
           <div className="max-w-2xl mx-auto">
 
             <div className="flex items-center gap-3 mb-6">
@@ -282,21 +282,23 @@ export default function NewPatientPage() {
         </main>
 
         {/* Sticky bottom action bar */}
-        <div className="fixed bottom-0 left-0 right-0 md:left-60 bg-white border-t border-slate-200 px-6 py-3 flex items-center justify-between gap-3 z-30">
+        <div className="fixed bottom-0 left-0 right-0 md:left-60 bg-white border-t border-slate-200 px-4 md:px-6 py-3 flex items-center justify-between gap-2 z-40"
+          style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}>
           <button onClick={() => router.push("/patients")}
             className="text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
             ← Cancel
           </button>
           <div className="flex items-center gap-2">
             <button onClick={() => save("invoice")} disabled={saving}
-              className="flex items-center gap-1.5 border border-blue-200 text-blue-600 hover:bg-blue-50 text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
+              className="flex items-center gap-1.5 border border-blue-200 text-blue-600 hover:bg-blue-50 text-sm font-semibold px-3 py-2 rounded-lg transition-colors disabled:opacity-50">
               <Receipt className="w-4 h-4" />
-              Register & Create Invoice
+              <span className="hidden sm:inline">Register &amp; Create Invoice</span>
+              <span className="sm:hidden">+ Invoice</span>
             </button>
             <button onClick={() => save("detail")} disabled={saving}
-              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors disabled:opacity-50">
+              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors disabled:opacity-50">
               <UserPlus className="w-4 h-4" />
-              {saving ? "Registering..." : "Register Patient"}
+              {saving ? "Saving..." : <><span className="hidden sm:inline">Register Patient</span><span className="sm:hidden">Register</span></>}
             </button>
           </div>
         </div>
